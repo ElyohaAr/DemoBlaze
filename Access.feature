@@ -51,6 +51,7 @@ Scenario Outline: Get mean value product cost
 Scenario: Check Home Page
 	Given I am on the homepage
 	And I click on Home page
+	# step not implemented
 	Then the correct page is displayed
 
 Scenario: Check Cart page
