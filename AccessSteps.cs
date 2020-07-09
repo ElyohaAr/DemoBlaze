@@ -1,20 +1,14 @@
 ﻿using ConsoleApp1;
 using ConsoleApp1.PageObjectModels;
-using Gherkin.Ast;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
-using NUnit.Framework.Internal;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading;
 using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.CommonModels;
 
 namespace DemoBlaze
 {
@@ -33,7 +27,7 @@ namespace DemoBlaze
         int productPrice;
         string MainName = "STORE";
         Boolean failFlag = false;
-       
+
 
 
         [Given(@"I am on the homepage")]
@@ -55,6 +49,8 @@ namespace DemoBlaze
         [When(@"I enter my credentials")]
         public void WhenIEnterMyCredentials()
         {
+
+            //try not to use thread.sleep
             usernameLogin = _driver.FindElement(By.Id("loginusername"));
             string User02 = "User02";
             Thread.Sleep(1000);
@@ -73,6 +69,7 @@ namespace DemoBlaze
         [Then(@"I get logged in")]
         public void ThenIGetLoggedIn()
         {
+
             var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 30));
             var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("nameofuser")));
 
@@ -85,20 +82,27 @@ namespace DemoBlaze
         [Given(@"I click on Sign Up button")]
         public void GivenIClickOnSignUpButton()
         {
+
+            //move elements to POM
             _driver.FindElement(By.Id("signin2")).Click();
 
         }
 
+        //instead of hardcoding the username,
+        //try using usernames that are generated on the fly, maybe using a GUID
+        //that way if you run the test 2 times, it creates a new user every time
         [When(@"I fill in required data for (.*)")]
-
         public void WhenIFillInRequiredData(string userName)
         {
+            //what do these 2 actions do?
             _driver.FindElement(By.ClassName("modal-title"));
             _driver.FindElement(By.ClassName("form-control-label"));
 
 
             usernameRegister = _driver.FindElement(By.Id("sign-username"));
+            //remove thread.sleep. Try using explicit wait (wait until element is visible/clickable)
             Thread.Sleep(1000);
+            //no need for extra click in the field
             usernameRegister.Click();
             usernameRegister.SendKeys(userName);
 
@@ -107,6 +111,7 @@ namespace DemoBlaze
             passwordRegister.Click();
             passwordRegister.SendKeys("password02");
             Thread.Sleep(1000);
+            //give more meaningful names to the variables
             cssPath = "#signInModal > div > div > div.modal-footer > button.btn.btn-primary";
             _driver.FindElement(By.CssSelector(cssPath)).Click();
         }
@@ -141,6 +146,9 @@ namespace DemoBlaze
         [When(@"I click on the “Next” buttons from Image Slider")]
         public void WhenIClickOnTheNextButtonsFromImageSlider()
         {
+            //this step will always pass, as the elements are always generated into the code
+            //you need to take the element that has the "active" class added,
+            //then try to compare it
             Thread.Sleep(2000);
             mainImage = _driver.FindElement(By.XPath("//*[@id=\"carouselExampleIndicators\"]/div/div[1]/img"));
 
@@ -155,6 +163,7 @@ namespace DemoBlaze
         [When(@"I click on the “Previous” buttons from Image Slider")]
         public void WhenIClickOnThePreviousButtonsFromImageSlider()
         {
+            //same as above
             Thread.Sleep(2000);
             mainImage = _driver.FindElement(By.XPath("//*[@id=\"carouselExampleIndicators\"]/div/div[1]/img"));
             _driver.FindElement(By.XPath("//*[@id=\"carouselExampleIndicators\"]/a[1]/span[1]")).Click(); // click previous
@@ -210,6 +219,7 @@ namespace DemoBlaze
                     productPage = "//*[contains(@onclick,'notebook')]";
                     break;
             }
+            //try to remove thread.sleep
             Thread.Sleep(2000);
             TestContext.Out.WriteLine("Enterd laptop page");
 
@@ -239,12 +249,16 @@ namespace DemoBlaze
                     i++;
                 }
                 Debug.WriteLine("after addtocart = " + budgetInput + " \ni=" + i);
+                //why is this next line needed?
                 WhenIFilterByProduct("Phones");
 
             }
 
 
         }
+
+        //try moving this to bool, instead of int. it's easier to follow
+        //also, could this be a little simplified?
         int AddToCartBudgetBased()
         {
             var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 10));
@@ -289,6 +303,7 @@ namespace DemoBlaze
 
             for (i = 1; i <= currentProducts; i++)
             {
+                //try to get rid of thread.sleep
                 Thread.Sleep(2000);
                 product = "//*[@id=\"tbodyid\"]/div[" + i + "]/div/div/h4/a";
                 var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(product)));
@@ -324,6 +339,7 @@ namespace DemoBlaze
                 case "Cart":
                     _driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(3);
                     _driver.FindElement(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")).Click();
+                    //in xpath, if you use "//" you don't need to use the * right after 
                     _driver.FindElement(By.XPath("//*[contains(@onclick,'showcart')]")).Click();
                     Thread.Sleep(3000);
                     break;
@@ -437,7 +453,7 @@ namespace DemoBlaze
         {
 
             var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 3));
-
+            //this can be optimized. Read all elements in cart, then do a loop over them and delete them.
             try
             {
                 while (wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[contains(@onclick,'delete')]"))).Displayed)
@@ -498,6 +514,7 @@ namespace DemoBlaze
 
             Assert.AreEqual("Product added.", popOutText);
             popOut.Accept();
+            //remove thread.sleep
             Thread.Sleep(2500);
 
         }
@@ -507,6 +524,7 @@ namespace DemoBlaze
         {
 
             ITakesScreenshot screenShootError = (ITakesScreenshot)_driver;
+            //screenshot could be taken on an [AfterScenario] hook
             Screenshot screenshot = screenShootError.GetScreenshot();
             screenshot.SaveAsFile(" timeout error message.png", ScreenshotImageFormat.Png);
 
@@ -517,13 +535,15 @@ namespace DemoBlaze
             string product = _driver.FindElement(By.XPath("//*[contains(@id,'tbodyid')]/tr/td[2]")).Text;
 
             // bool result =product.Equals(productName) && int.Parse(Regex.Match(_driver.FindElement(By.XPath("//*[contains(@id,'tbodyid')]/tr/td[3]")).Text, @"\d+").Value).Equals(productPrice);
+
+            //if you put the assert into a try/catch block, this won't count as a fail, program would continue
             try
             {
                 Assert.AreEqual(productName, product);
             }
             catch (Exception ex)
             {
-
+                //here, the screenshot taken at line 528 will be saved, no new screenshot will be taken
                 screenshot.SaveAsFile("Name not the same.png", ScreenshotImageFormat.Png);
                 TestContext.Out.WriteLine("ERROR: " + ex.Message);
                 failFlag = true;
@@ -570,6 +590,7 @@ namespace DemoBlaze
                     }
                     catch (Exception ex)
                     {
+                        //same here, new screenshot is not being taken, the one taken at the beginning of the class is saved again
                         screenshot.SaveAsFile("Not Cart page.png", ScreenshotImageFormat.Png);
                         TestContext.Out.WriteLine("ERROR: " + ex.Message);
                         failFlag = true;
@@ -768,6 +789,8 @@ namespace DemoBlaze
             Thread.Sleep(2000);
 
         }
+
+        //try to simplify this method
         [When(@"I add in cart a laptop, monitor and phone that don't exceed my budget")]
         public void WhenIAddInCartALaptopMonitorAndPhoneThatDonTExceedMyBudget()
         {
@@ -775,45 +798,46 @@ namespace DemoBlaze
             var homePage = new HomePage(_driver);
             bool passflag = false;
             var productPage = new ProductPage(_driver);
-            int i, j, k,  Sum;
+            int i, j, k, Sum;
             homePage.FilterByPhone();
             countPhones = homePage.CountElements();
-          
+
             homePage.FilterbyMonitors();
             countMonitors = homePage.CountElements();
-        
+
             homePage.FilterbyLaptops();
             countLaptops = homePage.CountElements();
-          
+
+            //wait not used
             var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 30));
             string product;
-                     
+
             for (i = 1; i < countPhones && (passflag != true); i++)
             {
-                
+
                 homePage.FilterByPhone();
                 product = "//*[@id=\"tbodyid\"]/div[" + i + "]/div/div/h5";
                 productPriceP = int.Parse(Regex.Match(_driver.FindElement(By.XPath(product)).Text, @"\d+").Value);
-             
-               
+
+
                 for (j = 1; j <= countLaptops && (passflag != true); j++)
                 {
-                   
+
                     homePage.FilterbyLaptops();
-                    product = "//*[@id=\"tbodyid\"]/div["+j+"]/div/div/h5";
+                    product = "//*[@id=\"tbodyid\"]/div[" + j + "]/div/div/h5";
                     productPriceL = int.Parse(Regex.Match(_driver.FindElement(By.XPath(product)).Text, @"\d+").Value);
-              
-                    for (k = 1;( k <= countMonitors); k++)
+
+                    for (k = 1; (k <= countMonitors); k++)
                     {
-                      
+
                         homePage.FilterbyMonitors();
                         product = "//*[@id=\"tbodyid\"]/div[" + k + "]/div/div/h5";
                         productPriceM = int.Parse(Regex.Match(_driver.FindElement(By.XPath(product)).Text, @"\d+").Value);
-                
+
                         Sum = productPriceM + productPriceL + productPriceP;
                         Console.WriteLine(Sum);
 
-                        if (Sum<=budgetInput)
+                        if (Sum <= budgetInput)
                         {
                             homePage.NavigateTo();
                             homePage.FilterByPhone();
@@ -839,21 +863,21 @@ namespace DemoBlaze
                             Console.WriteLine("We can buy them");
 
                             passflag = true;
-                           }
+                        }
                         else
                             Console.WriteLine("Not enough money");
 
-                                         
+
 
                     }
-                 
+
                 }
-                
+
             }
-           
+
         }
 
-
+        //all the steps should look like this, maybe some with an assert as well. Good job on this one
         [Then(@"I purchase all from cart")]
         public void ThenIPurchaseAllFromCart()
         {
@@ -870,3 +894,7 @@ namespace DemoBlaze
         }
     }
 }
+
+// Looks good overall, try to implement things in feedback. 
+// Also try adding a folder structure, for page objects/features.
+// Feature files can stay in the same folder as steps.cs files
