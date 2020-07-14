@@ -4,7 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Text.RegularExpressions;
-using System.Threading;
+
 
 //wrong namespace.
 namespace DemoBlaze
@@ -103,8 +103,7 @@ namespace DemoBlaze
         {
 
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"navbarExample\"]/ul/li[3]/a"))).Click();
-            Thread.Sleep(3000);
-
+           
         }
 
         public IWebElement AboutUsName()
@@ -253,7 +252,7 @@ namespace DemoBlaze
             NavigateTo();
             Console.WriteLine("Filter by laptops");
             FilterbyLaptops();
-            Thread.Sleep(2000);
+          
             Console.WriteLine("Assert");
             Assert.AreEqual("2017 Dell 15.6 Inch", DellLaptop.Text);
             Console.WriteLine("Chose laptop");

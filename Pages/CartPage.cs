@@ -1,11 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.Generic;
-using System.Security.Policy;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace DemoBlaze
 {
@@ -27,10 +23,10 @@ namespace DemoBlaze
 
         public void ShowCart()
         {
-            Thread.Sleep(1500);
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")));
             Driver.FindElement(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")).Click();
             Driver.FindElement(By.XPath("//*[contains(@onclick,'showcart')]")).Click();
-            Thread.Sleep(1500);
+          
         }
 
         public void PlaceOrder()
@@ -61,15 +57,11 @@ namespace DemoBlaze
         public void Name(String name)
         {
             IWebElement nameElement = Driver.FindElement(By.XPath("//*[@id=\"name\"]"));
-            Thread.Sleep(1000);
-            nameElement.Click();
             nameElement.SendKeys(name);
         }
         public void Country(String country)
         {
             IWebElement countryElement = Driver.FindElement(By.XPath("//*[contains(@id,'country')]"));
-            Thread.Sleep(1000);
-            countryElement.Click();
             countryElement.SendKeys(country);
         }
 
@@ -77,24 +69,18 @@ namespace DemoBlaze
         {
 
             IWebElement City = Driver.FindElement(By.XPath("//*[contains(@id,'city')]"));
-            Thread.Sleep(1000);
-            City.Click();
             City.SendKeys(city);
         }
         public void Card(String card)
         {
 
             IWebElement CreditCard = Driver.FindElement(By.XPath("//*[contains(@id,'card')]"));
-            Thread.Sleep(1000);
-            CreditCard.Click();
             CreditCard.SendKeys(card);
         }
         public void Month(String month)
         {
 
             IWebElement Month = Driver.FindElement(By.XPath("//*[contains(@id,'month')]"));
-            Thread.Sleep(1000);
-            Month.Click();
             Month.SendKeys(month);
         }
         public void Year(String year)
@@ -123,8 +109,7 @@ namespace DemoBlaze
         
         public int CountElements()
         {
-            //  Thread.Sleep(2000);
-
+           
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.ClassName("success")));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//*[contains(@onclick,'delete')]")));
             return Driver.FindElements(By.XPath("//*[contains(@class,'col-lg-8')]")).Count;

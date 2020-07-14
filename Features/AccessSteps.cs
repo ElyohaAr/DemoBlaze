@@ -1,14 +1,10 @@
 ﻿using ConsoleApp1;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Threading;
 using TechTalk.SpecFlow;
 
@@ -526,11 +522,6 @@ namespace DemoBlaze
         public void DisposeWebDriver()
         {
 
-            ITakesScreenshot screenShootError = (ITakesScreenshot)_driver;
-            //screenshot could be taken on an [AfterScenario] hook
-            Screenshot screenshot = screenShootError.GetScreenshot();
-            screenshot.SaveAsFile(" timeout error message.png", ScreenshotImageFormat.Png);
-            Thread.Sleep(1000);
             _driver.Dispose();
         }
 
