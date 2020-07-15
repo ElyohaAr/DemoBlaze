@@ -61,8 +61,8 @@ namespace DemoBlaze
         {
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")));
             int countElements = Driver.FindElements(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")).Count;
-              return countElements;
-         
+            return countElements;
+
         }
 
         public void MaximizeWindow()
@@ -74,6 +74,7 @@ namespace DemoBlaze
         {
 
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#cartur"))).Click();
+           
         }
 
         public void GoToLogIn()
@@ -103,7 +104,7 @@ namespace DemoBlaze
         {
 
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"navbarExample\"]/ul/li[3]/a"))).Click();
-           
+
         }
 
         public IWebElement AboutUsName()
@@ -250,25 +251,23 @@ namespace DemoBlaze
         public void AddDellLaptopToCart()
         {
             NavigateTo();
-            Console.WriteLine("Filter by laptops");
             FilterbyLaptops();
-          
-            Console.WriteLine("Assert");
+
             Assert.AreEqual("2017 Dell 15.6 Inch", DellLaptop.Text);
-            Console.WriteLine("Chose laptop");
+
             DellLaptop.Click();
-            Console.WriteLine("Add to cart");
+
             prodPage.AddToCart();
         }
 
         public void Login()
         {
-           NavigateTo();
-           MaximizeWindow();
-           GoToLogIn();
-           EnterLoginInfo("User02", "password02");
-           LoginButtonForm();
-           Assert.True(WelcomeElement().Text.Contains("Welcome"));
+            NavigateTo();
+            MaximizeWindow();
+            GoToLogIn();
+            EnterLoginInfo("User02", "password02");
+            LoginButtonForm();
+            Assert.True(WelcomeElement().Text.Contains("Welcome"));
         }
     }
 }

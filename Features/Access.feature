@@ -110,6 +110,7 @@ Scenario: Check each button from header when logged in
 		| Home     | Home       |
 
 #Scenario: Buy a Dell laptop model from 2017
+@myTag
 Scenario:Buy a Dell laptop model from 2017
 	Given I added in my cart a laptop from 2017
 	And I click on Cart page
@@ -124,6 +125,7 @@ Scenario: Cart empty after purchase
 	Then My cart is empty
 
 #Given I have 1500$ and I want to buy a phone, laptop and a monitor, create 1 Scenario to buy all in this budget.
+@myTag
 Scenario: Buy a phone, laptop and monitor within the limit of 1500$
 	Given I am logged in
 	And I have a budget of 1500$

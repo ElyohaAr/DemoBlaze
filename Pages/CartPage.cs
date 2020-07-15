@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace DemoBlaze
 {
@@ -31,10 +32,12 @@ namespace DemoBlaze
 
         public void PlaceOrder()
         {
-
-            _ = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@class,'btn btn-success')]")));
-
+            //wait untile elements are loaded 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//tr[@class='success']//td//img")));
+            //search for place order button
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[contains(@class,'btn btn-success')]")));
             Driver.FindElement(By.XPath("//*[contains(@class,'btn btn-success')]")).Click();
+   
         }
         public void BuyAll()
         {
@@ -56,6 +59,8 @@ namespace DemoBlaze
 
         public void Name(String name)
         {
+
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"name\"]")));
             IWebElement nameElement = Driver.FindElement(By.XPath("//*[@id=\"name\"]"));
             nameElement.SendKeys(name);
         }
@@ -132,8 +137,8 @@ namespace DemoBlaze
         public void FillRequiredData()
         {
 
-            ShowCart();
-            PlaceOrder();
+          //  ShowCart();
+          //  PlaceOrder();
             Name("User02");
             Country("Romania");
             City("Timisoara");
