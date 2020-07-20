@@ -3,6 +3,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TechTalk.SpecFlow;
 
 namespace DemoBlaze
 {
@@ -45,13 +46,24 @@ namespace DemoBlaze
         {
             string cssPathSendMsgButton = "#exampleModal > div > div > div.modal-footer > button.btn.btn-primary";
             Driver.FindElement(By.CssSelector(cssPathSendMsgButton)).Click();
+
         }
-        public IWebElement Name ()
+        public IWebElement Name()
         {
-           
+
             var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='exampleModalLabel']")));
 
             return element;
         }
+
+        public void FillDataRequired(string email, string user, string message)
+        {
+            ContactEmail(email);
+            ContactName(user);
+            Message(message);
+        }
+
+     
+
     }
 }

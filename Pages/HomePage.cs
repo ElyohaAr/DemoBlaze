@@ -28,8 +28,10 @@ namespace DemoBlaze
 
         public void NavigateTo()
         {
+            MaximizeWindow();
             Driver.Navigate().GoToUrl(PageUrl);
             Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(2);
+            
         }
 
         public void FilterByPhone()
@@ -246,8 +248,8 @@ namespace DemoBlaze
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("list-group-item")));
         }
 
-        public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#tbodyid > div:nth-child(5) > div > div > h4 > a")));
-
+        // public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#tbodyid > div:nth-child(5) > div > div > h4 > a")));
+        public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.LinkText("2017 Dell 15.6 Inch"))); //*[@id="tbodyid"]/div[5]/div/div/h4/a
         public void AddDellLaptopToCart()
         {
             NavigateTo();
@@ -263,7 +265,6 @@ namespace DemoBlaze
         public void Login()
         {
             NavigateTo();
-            MaximizeWindow();
             GoToLogIn();
             EnterLoginInfo("User02", "password02");
             LoginButtonForm();

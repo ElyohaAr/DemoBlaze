@@ -11,9 +11,9 @@ namespace DemoBlaze
 
         private readonly IWebDriver Driver;
         WebDriverWait wait;
-       
+
         public IWebElement TotalButton() => Driver.FindElement(By.XPath("//*[@id='page-wrapper']/div/div[2]/h2"));
-        public IWebElement _name() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@id,'tbodyid')]/tr/td[2]")));
+        private IWebElement name() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@id,'tbodyid')]/tr/td[2]")));
         public IWebElement CartName() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#page-wrapper > div > div.col-lg-8 > h2")));
         public int Price() => int.Parse(Regex.Match(Driver.FindElement(By.XPath("//*[contains(@id,'tbodyid')]/tr/td[3]")).Text, @"\d+").Value);
         public CartPage(IWebDriver driver)
@@ -27,7 +27,6 @@ namespace DemoBlaze
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")));
             Driver.FindElement(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")).Click();
             Driver.FindElement(By.XPath("//*[contains(@onclick,'showcart')]")).Click();
-          
         }
 
         public void PlaceOrder()
@@ -37,7 +36,7 @@ namespace DemoBlaze
             //search for place order button
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[contains(@class,'btn btn-success')]")));
             Driver.FindElement(By.XPath("//*[contains(@class,'btn btn-success')]")).Click();
-   
+
         }
         public void BuyAll()
         {
@@ -90,7 +89,6 @@ namespace DemoBlaze
         }
         public void Year(String year)
         {
-
             IWebElement Year = Driver.FindElement(By.XPath("//*[contains(@id,'year')]"));
             Year.SendKeys(year);
         }
@@ -99,8 +97,8 @@ namespace DemoBlaze
         {
 
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"orderModal\"]/div/div/div[3]/button[2]"))).Click();
-          //  Driver.FindElement(By.XPath("//*[@id=\"orderModal\"]/div/div/div[3]/button[2]")).Click();
-            
+            //  Driver.FindElement(By.XPath("//*[@id=\"orderModal\"]/div/div/div[3]/button[2]")).Click();
+
         }
         public void AcceptOrderPopOut()
         {
@@ -111,10 +109,10 @@ namespace DemoBlaze
             Driver.FindElement(By.XPath("//*[contains(@class,'sa-confirm-button-container')]")).Click();
         }
 
-        
+
         public int CountElements()
         {
-           
+
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.ClassName("success")));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//*[contains(@onclick,'delete')]")));
             return Driver.FindElements(By.XPath("//*[contains(@class,'col-lg-8')]")).Count;
@@ -131,21 +129,18 @@ namespace DemoBlaze
 
         public string Name()
         {
-            return _name().Text;
+            return name().Text;
         }
 
-        public void FillRequiredData()
+        public void FillRequiredData(string name, string country, string city, string card, string month, string year)
         {
+            Name(name);
+            Country(country);
+            City(city);
+            Card(card);
+            Month(month);
+            Year(year);
 
-          //  ShowCart();
-          //  PlaceOrder();
-            Name("User02");
-            Country("Romania");
-            City("Timisoara");
-            Card("1111-2222-3333-4444-5555");
-            Month("Feb");
-            Year("2025");
-         
         }
 
 

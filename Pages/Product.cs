@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using DemoBlaze;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -21,6 +22,7 @@ namespace ConsoleApp1
         {
             Driver = driver;
             wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 5));
+     
         }
 
         public void AddToCart()

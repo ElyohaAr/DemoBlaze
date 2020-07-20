@@ -46,8 +46,6 @@ namespace DemoBlaze
         {
 
             homePage.NavigateTo();
-            homePage.MaximizeWindow();
-
         }
 
         [When(@"I click on the login button")]
@@ -309,7 +307,7 @@ namespace DemoBlaze
 
         }
 
-   
+
         [Given(@"I click on the first product available")]
         public void GivenIClickOnTheFirstProductAvailable()
         {
@@ -383,7 +381,7 @@ namespace DemoBlaze
                 TestContext.Out.WriteLine("My cart is empty, so the following error presents : " + ex.Message);
 
             }
-        
+
             Assert.AreEqual(0, countPhones);
 
         }
@@ -458,7 +456,7 @@ namespace DemoBlaze
         [When(@"I fill the required data to purchase")]
         public void WhenIFillTheRequiredDataToPurchase()
         {
-            cartPage.FillRequiredData();
+            cartPage.FillRequiredData("User02", "RO", "TM", "111-222-333-444", "FEB", "2025");
         }
 
         [Then(@"I can buy what is in cart")]
@@ -496,7 +494,7 @@ namespace DemoBlaze
         [When(@"I add in cart a laptop, monitor and phone that don't exceed my budget")]
         public void WhenIAddInCartALaptopMonitorAndPhoneThatDonTExceedMyBudget()
         {
-           usefulFunction.AddLaptopMonitoPhoneToCartBasedonBudget(budgetInput);
+            usefulFunction.AddLaptopMonitoPhoneToCartBasedonBudget(budgetInput);
         }
 
         //all the steps should look like this, maybe some with an assert as well. Good job on this one
@@ -507,6 +505,59 @@ namespace DemoBlaze
             cartPage.BuyAll();
         }
 
+
+        [When(@"I fill the required data for a new message")]
+        public void WhenIFillTheRequiredDataForANewMessage()
+        {
+            contactUs.FillDataRequired("bla@gmail.com", "User", " My message");
+        }
+
+        [Then(@"I can send the message")]
+        public void ThenICanSendTheMessage()
+        {
+            contactUs.SendMessageButton();
+
+            Assert.AreEqual("Sign up successful.", AlertPresent().Text);
+            AlertPresent().Accept();//click on submit button
+        }
+
+
+        [When(@"I dont fill the required data to purchase")]
+        public void WhenIDontFillTheRequiredDataToPurchase()
+        {
+            cartPage.FillRequiredData("", "RO", "", "111-222-333-444", "FEB", "2025");
+        }
+
+        [Then(@"I can't buy what is in cart")]
+        public void ThenICanTBuyWhatIsInCart()
+        {
+            cartPage.ConfirmOrder();
+            Assert.AreEqual("Please fill out Name and Creditcard.", AlertPresent().Text);
+            AlertPresent().Accept();//click on submit button
+        }
+
+        [When(@"I don't fill the required data for a new message")]
+        public void WhenIDonTFillTheRequiredDataForANewMessage()
+        {
+            contactUs.FillDataRequired("", "", "");
+        }
+
+        [Then(@"My message is not sent")]
+        public void ThenMyMessageIsNotSent()
+        {
+            contactUs.SendMessageButton();
+            Assert.AreNotEqual("Thanks for the message!!", AlertPresent().Text);
+            AlertPresent().Accept();//click on submit button
+        }
+
+        [Then(@"My message is sent")]
+        public void ThenMyMessageIsSent()
+        {
+            contactUs.SendMessageButton();
+            Assert.AreEqual("Thanks for the message!!", AlertPresent().Text);
+            AlertPresent().Accept();//click on submit button
+
+        }
 
 
         public IAlert AlertPresent()
@@ -525,7 +576,7 @@ namespace DemoBlaze
             _driver.Dispose();
         }
 
-        [BeforeScenario("myTag")]
+        [BeforeScenario("EmptyCart")]
         public void Precond()
         {
             homePage.Login();
