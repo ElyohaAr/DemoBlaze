@@ -144,9 +144,9 @@ namespace DemoBlaze
 
         public void EnterLoginInfo(string username, string password)
         {
-            LoginUsername(username);
-            LoginPassword(password);
-
+            LoginUsername(username);//poti declara username ca element inafara metodelor si apoi sa il apelezi aici ca userNameElement.SendKeys(username); Asa poti renunta si la metoda LogInUsername();
+            LoginPassword(password);//la fel
+            
         }
 
         public void GoToSignIn()

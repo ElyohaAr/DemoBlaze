@@ -560,7 +560,7 @@ namespace DemoBlaze
         }
 
 
-        public IAlert AlertPresent()
+        public IAlert AlertPresent()//metoda asta ar trebui sa fie nudeva in HomePage sau UsefulFunctions nu in clasa de steps
         {
             var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 10));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
