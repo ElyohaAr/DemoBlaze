@@ -8,7 +8,9 @@ namespace DemoBlaze
 {
     class CartPage
     {
-
+        /*
+         * Peste tot unde ai elemente pe care le declari sau cauti in metode, e indicat sa le scoti afara din metode si sa le declari la fel cum ai facut cu CartName/Price de mai jos
+         */
         private readonly IWebDriver Driver;
         WebDriverWait wait;
 
@@ -24,17 +26,17 @@ namespace DemoBlaze
 
         public void ShowCart()
         {
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")));
-            Driver.FindElement(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")).Click();
-            Driver.FindElement(By.XPath("//*[contains(@onclick,'showcart')]")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a"))); //you can extract these lines/elements outside of method
+            Driver.FindElement(By.CssSelector("#navbarExample>ul>li:nth-child(4)>a")).Click();// and use here like NameOfWebelement.Click();
+            Driver.FindElement(By.XPath("//*[contains(@onclick,'showcart')]")).Click();//
         }
 
         public void PlaceOrder()
         {
             //wait untile elements are loaded 
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//tr[@class='success']//td//img")));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//tr[@class='success']//td//img")));//same here
             //search for place order button
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[contains(@class,'btn btn-success')]")));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[contains(@class,'btn btn-success')]")));//
             Driver.FindElement(By.XPath("//*[contains(@class,'btn btn-success')]")).Click();
 
         }
@@ -56,7 +58,7 @@ namespace DemoBlaze
         }
 
 
-        public void Name(String name)
+        public void Name(String name)//use more specific names for methods. e.g: FillNameOnOrderForm()   etc
         {
 
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"name\"]")));
