@@ -9,6 +9,14 @@ namespace DemoBlaze
 {
     public class ContactUs
     {
+        private IWebElement _inputMail => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("recipient-email")));
+        private IWebElement _inputName => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("recipient-name")));
+        private IWebElement _inputMessage => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("message-text")));
+        private IWebElement _sendMessageButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//button[contains(text(),'Send message')]")));
+        private IWebElement _pageName=> wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#exampleModalLabel")));
+        private IAlert _popOut => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
+
+
         private readonly IWebDriver Driver;
         WebDriverWait wait;
         public ContactUs(IWebDriver driver)
@@ -17,43 +25,31 @@ namespace DemoBlaze
             wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 5));
         }
 
-        ////*[@id="exampleModalLabel"]
-
+        
         public void ContactEmail(String Text)
         {
-            var wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 5));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("recipient-email")));
-
-            Driver.FindElement(By.Id("recipient-email")).SendKeys(Text);
+           _inputMail.SendKeys(Text);
         }
 
         public void ContactName(String Text)
         {
-            var wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 5));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("recipient-name")));
-
-            Driver.FindElement(By.Id("recipient-name")).SendKeys(Text);
+           _inputName.SendKeys(Text);
         }
 
         public void Message(String Text)
         {
-            var wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 5));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("message-text")));
-
-            Driver.FindElement(By.Id("message-text")).SendKeys(Text);
+            
+          _inputMessage.SendKeys(Text);
         }
         public void SendMessageButton()
         {
-            string cssPathSendMsgButton = "#exampleModal > div > div > div.modal-footer > button.btn.btn-primary";
-            Driver.FindElement(By.CssSelector(cssPathSendMsgButton)).Click();
+           _sendMessageButton.Click();
 
         }
-        public IWebElement Name()
+        public string Name()
         {
 
-            var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='exampleModalLabel']")));
-
-            return element;
+            return _pageName.Text;
         }
 
         public void FillDataRequired(string email, string user, string message)
@@ -63,7 +59,13 @@ namespace DemoBlaze
             Message(message);
         }
 
-     
+        public string AlertText()
+        {
+            var text = _popOut.Text;
+            _popOut.Accept();//click on submit button
+            return text ;
+        }
+
 
     }
 }

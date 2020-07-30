@@ -12,11 +12,31 @@ namespace DemoBlaze
     public class HomePage
     {
         private readonly IWebDriver Driver;
+        private IWebElement _phoneCategory => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'phone')]")));
+        private IWebElement _monitorCategory => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'monitor')]")));
+        private IWebElement _notebookCategory => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'notebook')]")));
+        private IWebElement _productsOnPage => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")));
+        private IWebElement _cart => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#cartur")));
+        private IWebElement _loginButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("login2")));
+        private IWebElement _contactButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.LinkText("Contact")));
+        private IWebElement _logoutButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#logout2")));
+        private IWebElement _aboutUsButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.LinkText("About us")));
+        private IWebElement _aboutUsName => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("videoModalLabel")));
+        private IWebElement _loginUsername => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("loginusername")));
+        private IWebElement _loginPassword => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("loginpassword")));
+        private IWebElement _loginForm => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//button[contains(text(),'Log in')]")));
+        private IWebElement _signinButton => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("signin2")));
+        private IWebElement _welcomeUserName => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("nameofuser")));
+        private IWebElement _sliderNext => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"carouselExampleIndicators\"]/a[2]/span[1]")));
+        private IWebElement _sliderPrevious => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"carouselExampleIndicators\"]/a[1]/span[1]")));
+        private IWebElement _currentActiveSlide => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible((By.XPath("//*[contains(@class,'carousel-item active')]/img"))));
+
+        public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.LinkText("2017 Dell 15.6 Inch"))); //*[@id="tbodyid"]/div[5]/div/div/h4/a
+
         private const string PageUrl = "https://www.demoblaze.com/";
         ProductPage prodPage;
         WebDriverWait wait;
 
-        private IWebElement _loginButton() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("login2")));
         public HomePage(IWebDriver driver)
         {
             Driver = driver;
@@ -31,39 +51,34 @@ namespace DemoBlaze
             MaximizeWindow();
             Driver.Navigate().GoToUrl(PageUrl);
             Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(2);
-            
+
         }
 
         public void FilterByPhone()
         {
 
             Driver.Navigate().GoToUrl(PageUrl);
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'phone')]")));
-            Driver.FindElement(By.XPath("//*[contains(@onclick,'phone')]")).Click();
+            _phoneCategory.Click();
 
         }
         public void FilterbyMonitors()
         {
 
             Driver.Navigate().GoToUrl(PageUrl);
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'monitor')]")));
-            Driver.FindElement(By.XPath("//*[contains(@onclick,'monitor')]")).Click();
+            _monitorCategory.Click();
 
         }
         public void FilterbyLaptops()
         {
 
             Driver.Navigate().GoToUrl(PageUrl);
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'notebook')]")));
-            Driver.FindElement(By.XPath("//*[contains(@onclick,'notebook')]")).Click();
+            _notebookCategory.Click();
 
         }
 
         public int CountElements()
         {
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")));
-            int countElements = Driver.FindElements(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")).Count;
-            return countElements;
+            return _productsOnPage.FindElements(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")).Count;
 
         }
 
@@ -74,72 +89,49 @@ namespace DemoBlaze
 
         public void GoToCartPage()
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#cartur"))).Click();
-           
+            _cart.Click();
         }
 
         public void GoToLogIn()
         {
 
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("login2")));
-
-            Driver.FindElement(By.Id("login2")).Click();
+            _loginButton.Click();
 
         }
         public void GoToContact()
         {
-            Driver.FindElement(By.XPath("//*[@id=\"navbarExample\"]/ul/li[2]/a")).Click();
+            _contactButton.Click();
 
         }
 
 
         public void GoToLogOut()
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"logout2\"]"))).Click();
-            // Driver.FindElement(By.XPath("//*[@id=\"logout2\"]")).Click();
-
+            _logoutButton.Click();
 
         }
         public void GoToAboutUs()
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"navbarExample\"]/ul/li[3]/a"))).Click();
-
+            _aboutUsButton.Click();
         }
 
         public IWebElement AboutUsName()
         {
-
-            var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='videoModalLabel']")));
-
-            return element;
+            return _aboutUsName;
         }
 
         public void LoginUsername(string username)
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("loginusername")));
-
-            Driver.FindElement(By.Id("loginusername")).SendKeys(username);
-
+            _loginUsername.SendKeys(username);
         }
         public void LoginPassword(string password)
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("loginpassword")));
-
-            Driver.FindElement(By.Id("loginpassword")).SendKeys(password);
-
+            _loginPassword.SendKeys(password);
         }
 
         public void LoginButtonForm()
         {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#logInModal > div > div > div.modal-footer > button.btn.btn-primary")));
-
-            Driver.FindElement(By.CssSelector("#logInModal > div > div > div.modal-footer > button.btn.btn-primary")).Click();
+            _loginForm.Click();
         }
 
         public void EnterLoginInfo(string username, string password)
@@ -151,58 +143,31 @@ namespace DemoBlaze
 
         public void GoToSignIn()
         {
-
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("signin2")));
-
-            Driver.FindElement(By.Id("signin2")).Click();
+            _signinButton.Click();
         }
-
-
-
 
 
         public IWebElement WelcomeElement()
         {
-
-            var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("nameofuser")));
-
-            return element;
+            return _welcomeUserName;
         }
 
         public void SliderNextImage()
         {
 
-
-            var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"carouselExampleIndicators\"]/a[2]/span[1]")));
-            element.Click();
+            _sliderNext.Click();
 
         }
 
         public void SliderPreviousImage()
         {
-
-
-            var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"carouselExampleIndicators\"]/a[1]/span[1]")));
-            element.Click();
+            _sliderPrevious.Click();
 
         }
-        public IWebElement CurrentImage()
+        public string CurrentImage()
         {
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible((By.XPath("//*[contains(@class,'carousel-item active')]"))));
+            return _currentActiveSlide.GetAttribute("alt").ToString();
 
-            var element = Driver.FindElement(By.XPath("//*[contains(@class,'carousel-item active')]/img"));
-
-            return element;
-
-        }
-
-        public int ElementsOnPage()
-        {
-
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")));
-
-            return Driver.FindElements(By.XPath("//*[contains(@class,'col-lg-4 col-md-6 mb-4')]")).Count;
         }
 
         public void RandomElementChosen()
@@ -212,7 +177,7 @@ namespace DemoBlaze
             int countElements;
             string product;
 
-            countElements = ElementsOnPage();
+            countElements = CountElements();
             product = "//*[@id=\"tbodyid\"]/div[" + (rnd.Next(countElements - 1) + 1) + "]/div/div/h4/a";
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(product))).Click();
 
@@ -240,25 +205,19 @@ namespace DemoBlaze
 
         public string LoginMainPageName()
         {
-            return _loginButton().Text;
+            return _loginButton.Text;
         }
 
-        public void LoadProducts()
-        {
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("list-group-item")));
-        }
+        public void LoadProducts() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("list-group-item")));
 
-        // public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.CssSelector("#tbodyid > div:nth-child(5) > div > div > h4 > a")));
-        public IWebElement DellLaptop => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.LinkText("2017 Dell 15.6 Inch"))); //*[@id="tbodyid"]/div[5]/div/div/h4/a
+
+
         public void AddDellLaptopToCart()
         {
             NavigateTo();
             FilterbyLaptops();
-
             Assert.AreEqual("2017 Dell 15.6 Inch", DellLaptop.Text);
-
             DellLaptop.Click();
-
             prodPage.AddToCart();
         }
 
@@ -269,6 +228,47 @@ namespace DemoBlaze
             EnterLoginInfo("User02", "password02");
             LoginButtonForm();
             Assert.True(WelcomeElement().Text.Contains("Welcome"));
+        }
+
+        public float MeanValue()
+        {
+            int currentProducts, counter;
+            var Value = 0;
+
+            currentProducts = CountElements();
+
+            string product;
+
+            for (counter = 1; counter <= currentProducts; counter++)
+            {
+                //try to get rid of thread.sleep
+
+                product = "//*[@id=\"tbodyid\"]/div[" + counter + "]/div/div/h5";
+                Value += ProductPrice(product);
+
+            }
+
+            return Value / currentProducts;
+
+
+        }
+
+        public void FilterByProduct(string Product)
+        {
+            LoadProducts();
+
+            switch (Product)
+            {
+                case "Phones":
+                    FilterByPhone();
+                    break;
+                case "Monitors":
+                    FilterbyMonitors();
+                    break;
+                case "Laptops":
+                    FilterbyLaptops();
+                    break;
+            }
         }
     }
 }

@@ -5,7 +5,9 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading;
+using System.Xml.Serialization;
 using TechTalk.SpecFlow;
 
 namespace DemoBlaze
@@ -13,7 +15,6 @@ namespace DemoBlaze
     [Binding]
     public class RegisterSteps
     {
-
         public IWebDriver _driver = new ChromeDriver();
         string mainImage, currentImage;
         int budgetInput;
@@ -22,11 +23,13 @@ namespace DemoBlaze
         ContactUs contactUs;
         ProductPage prodPage;
         UsefulFunctions usefulFunction;
+        SignUp signup;
+        readonly Constants constantVariable;
         WebDriverWait wait;
         ITakesScreenshot screenShootError;
         string productName;
         int productPrice;
-        readonly string MainName = "STORE";
+
         Boolean failFlag = false;
 
         public RegisterSteps()
@@ -35,7 +38,9 @@ namespace DemoBlaze
             cartPage = new CartPage(_driver);
             prodPage = new ProductPage(_driver);
             contactUs = new ContactUs(_driver);
+            signup = new SignUp(_driver);
             usefulFunction = new UsefulFunctions(_driver);
+            constantVariable = new Constants();
             wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 5));
             screenShootError = (ITakesScreenshot)_driver;
         }
@@ -44,7 +49,6 @@ namespace DemoBlaze
         [Given(@"I am on the homepage")]
         public void GivenIAmOnTheHomepage()
         {
-
             homePage.NavigateTo();
         }
 
@@ -59,8 +63,7 @@ namespace DemoBlaze
         [When(@"I enter my credentials")]
         public void WhenIEnterMyCredentials()
         {
-
-            homePage.EnterLoginInfo("User02", "password02");
+            homePage.EnterLoginInfo(constantVariable.UserName, constantVariable.Password);
             homePage.LoginButtonForm();
 
         }
@@ -80,24 +83,21 @@ namespace DemoBlaze
 
         }
 
-        //instead of hardcoding the username,
-        //try using usernames that are generated on the fly, maybe using a GUID
-        //that way if you run the test 2 times, it creates a new user every time
         [When(@"I fill in required data for (.*)")]
         public void WhenIFillInRequiredData(string userName)
         {
-            SignIn LogINPage = new SignIn(_driver);
+            SignUp LogINPage = new SignUp(_driver);
 
             if (userName == "RandomUser")
             {
                 userName = usefulFunction.Random(6);
-                LogINPage.EnterSignInInfo(userName, "password02");
+                LogINPage.EnterSignInInfo(userName, constantVariable.Password);
                 LogINPage.SignInButton();
             }
             else
             {
 
-                LogINPage.EnterSignInInfo(userName, "password02");
+                LogINPage.EnterSignInInfo(userName, constantVariable.Password);
                 LogINPage.SignInButton();
             }
         }
@@ -105,29 +105,21 @@ namespace DemoBlaze
         [Then(@"I get registered")]
         public void ThenIGetRegistered()
         {
-
-            Assert.AreEqual("Sign up successful.", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
+            Assert.AreEqual("Sign up successful.", signup.AlertText());
 
         }
 
         [Then(@"I get informed that the username is taken")]
         public void ThenIGetInformedThatTheUsernameIsTaken()
         {
-
-            Assert.AreEqual("This user already exist.", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
-
+            Assert.AreEqual("This user already exist.", signup.AlertText());
         }
 
 
         [When(@"I click on the “Next” buttons from Image Slider")]
         public void WhenIClickOnTheNextButtonsFromImageSlider()
         {
-            //this step will always pass, as the elements are always generated into the code
-            //you need to take the element that has the "active" class added,
-            //then try to compare it
-            mainImage = homePage.CurrentImage().GetAttribute("alt").ToString();
+            mainImage = homePage.CurrentImage();
 
             homePage.SliderNextImage();
 
@@ -137,8 +129,7 @@ namespace DemoBlaze
         public void WhenIClickOnThePreviousButtonsFromImageSlider()
         {
 
-            mainImage = homePage.CurrentImage().GetAttribute("alt").ToString();
-
+            mainImage = homePage.CurrentImage();
             homePage.SliderPreviousImage();
 
         }
@@ -149,7 +140,7 @@ namespace DemoBlaze
 
             homePage.SliderLoading(mainImage);
 
-            currentImage = homePage.CurrentImage().GetAttribute("alt").ToString();
+            currentImage = homePage.CurrentImage();
             Console.WriteLine(mainImage + "  " + currentImage);
 
             Assert.False(mainImage == currentImage);
@@ -172,20 +163,7 @@ namespace DemoBlaze
         [When(@"I filter by (.*)")]
         public void WhenIFilterByProduct(string Product)
         {
-            homePage.LoadProducts();
-
-            switch (Product)
-            {
-                case "Phones":
-                    homePage.FilterByPhone();
-                    break;
-                case "Monitors":
-                    homePage.FilterbyMonitors();
-                    break;
-                case "Laptops":
-                    homePage.FilterbyLaptops();
-                    break;
-            }
+           homePage.FilterByProduct(Product);
 
         }
 
@@ -204,16 +182,11 @@ namespace DemoBlaze
                     productsAdded++;
                 }
 
-                //why is this next line needed?
-                //ElAr: after clicking on a product to go back to filter by phones page 
-
             }
 
 
         }
 
-        //try moving this to bool, instead of int. it's easier to follow
-        //also, could this be a little simplified?
         bool AddToCartBudgetBased()
         {
 
@@ -238,63 +211,14 @@ namespace DemoBlaze
         [Then(@"I can see in the test output the mean value of each product")]
         public void ThenICanSeeInTheTestOutputTheMeanValueOfEachProduct()
         {
-
-            int currentProducts;
-            int i, Value = 0;
-
-            currentProducts = homePage.CountElements();
-
-            string product;
-
-            for (i = 1; i <= currentProducts; i++)
-            {
-                //try to get rid of thread.sleep
-
-                product = "//*[@id=\"tbodyid\"]/div[" + i + "]/div/div/h5";
-                Value += homePage.ProductPrice(product);
-
-            }
-
-            Console.WriteLine("Sum {0}", Value);
-            Console.WriteLine("MeanValue is {0}", Value / currentProducts);
+            Console.WriteLine("MeanValue is {0}", homePage.MeanValue());
 
         }
 
         [Given(@"I click on (.*) page")]
         public void GivenIClickOnPage(string pageType)
         {
-
-            switch (pageType)
-            {
-                case "Home":
-                    homePage.NavigateTo();
-                    break;
-
-                case "Cart":
-                    homePage.GoToCartPage();
-                    break;
-
-                case "Contact":
-                    homePage.GoToContact();
-                    break;
-
-                case "Log out":
-
-                    homePage.GoToLogOut();
-                    break;
-
-                case "About us":
-                    homePage.GoToAboutUs();
-                    break;
-
-                case "Log in":
-                    homePage.GoToLogIn();
-                    break;
-
-                case "Sign up":
-                    homePage.GoToSignIn();
-                    break;
-            }
+            usefulFunction.AccessPage(pageType);
 
         }
 
@@ -303,7 +227,7 @@ namespace DemoBlaze
         public void ThenTheCorrectPageIsDisplayed()
         {
             TestContext.Out.WriteLine("title: ", _driver.Title);
-            Assert.AreEqual(_driver.Title, MainName);
+            Assert.AreEqual(_driver.Title, constantVariable.MainName);
 
         }
 
@@ -319,10 +243,7 @@ namespace DemoBlaze
         [Then(@"I can see it's price")]
         public void ThenICanSeeItSPrice()
         {
-            int prodPrice;
-            prodPrice = prodPage.Price();
-
-            Console.Out.WriteLine("The first available product costs " + prodPrice);
+            Console.Out.WriteLine("The first available product costs " + prodPage.Price());
         }
 
         [Given(@"I have items in Cart")]
@@ -336,34 +257,7 @@ namespace DemoBlaze
         [Given(@"I remove them")]
         public void ThenIRemoveThem()
         {
-            var elementInTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath("//*[contains(@class,'col-lg-8')]")));
-            var countItems = elementInTable.Count();
-            var count = 0;
-            //this can be optimized. Read all elements in cart, then do a loop over them and delete them.
-            try
-            {
-                do
-                {
-                    cartPage.DeleteElement();
-                    while (!countItems.Equals(elementInTable))
-                    {
-                        Thread.Sleep(100);
-                        elementInTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.PresenceOfAllElementsLocatedBy(By.ClassName("success")));
-                        if (count == 40) break;
-                        count++;
-                    }
-
-                    countItems--;
-
-                } while (cartPage.CountElements() != 0);
-            }
-            catch (Exception ex)
-            {
-                TestContext.Out.WriteLine("No more elements to delete, please excuse error : " + ex.Message);
-                ITakesScreenshot screenShootError = (ITakesScreenshot)_driver;
-                Screenshot screenshot = screenShootError.GetScreenshot();
-                screenshot.SaveAsFile(" timeout error message.png", ScreenshotImageFormat.Png);
-            }
+            cartPage.RemoveAllElementsFromCart();
         }
 
 
@@ -401,7 +295,7 @@ namespace DemoBlaze
         public void ThenTheSelectedProductShouldBeInCart()
         {
 
-            Assert.AreEqual(productName, cartPage.Name());
+            Assert.AreEqual(productName, cartPage.NameText());
             Assert.AreEqual(productPrice, cartPage.Price());
 
         }
@@ -409,39 +303,7 @@ namespace DemoBlaze
         [Then(@"the (.*) page is displayed")]
         public void ThenThePageIsDisplayed(string wantedPage)
         {
-
-            switch (wantedPage)
-            {
-                case "Home":
-                    Console.WriteLine("title: ", _driver.Title);
-                    Assert.AreEqual(_driver.Title, MainName);
-                    break;
-
-                case "Cart":
-                    Assert.AreEqual("Products", cartPage.CartName().Text);
-                    break;
-
-                case "Contact":
-                    Assert.AreEqual("New message", contactUs.Name().Text);
-                    break;
-
-                case "Log out":
-                    Assert.AreEqual("Log in", homePage.LoginMainPageName());
-                    break;
-
-                case "About us":
-                    Assert.AreEqual("About us", homePage.AboutUsName().Text);
-                    break;
-
-                case "Log in":
-                    _driver.FindElement(By.Id("logInModalLabel"));
-                    break;
-
-                case "Sign up":
-                    _driver.FindElement(By.Id("signInModalLabel"));
-                    break;
-
-            }
+            usefulFunction.WantedPage(wantedPage);
 
             Assert.IsFalse(failFlag);
         }
@@ -456,7 +318,13 @@ namespace DemoBlaze
         [When(@"I fill the required data to purchase")]
         public void WhenIFillTheRequiredDataToPurchase()
         {
-            cartPage.FillRequiredData("User02", "RO", "TM", "111-222-333-444", "FEB", "2025");
+            cartPage.FillRequiredData(constantVariable.UserName, constantVariable.Country, constantVariable.City, constantVariable.Card, constantVariable.Month, constantVariable.Year);
+        }
+        
+        [When(@"I dont fill the required data to purchase")]
+        public void WhenIDontFillTheRequiredDataToPurchase()
+        {
+            cartPage.FillRequiredData("", constantVariable.Country, "", constantVariable.Card, constantVariable.Month, constantVariable.Year);
         }
 
         [Then(@"I can buy what is in cart")]
@@ -476,9 +344,7 @@ namespace DemoBlaze
         [Given(@"I click on Place order button")]
         public void GivenIClickOnPlaceOrderButton()
         {
-
             cartPage.PlaceOrder();
-
         }
 
 
@@ -509,7 +375,7 @@ namespace DemoBlaze
         [When(@"I fill the required data for a new message")]
         public void WhenIFillTheRequiredDataForANewMessage()
         {
-            contactUs.FillDataRequired("bla@gmail.com", "User", " My message");
+            contactUs.FillDataRequired(constantVariable.email, constantVariable.UserName, constantVariable.MessageText);
         }
 
         [Then(@"I can send the message")]
@@ -517,23 +383,15 @@ namespace DemoBlaze
         {
             contactUs.SendMessageButton();
 
-            Assert.AreEqual("Sign up successful.", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
-        }
+            Assert.AreEqual("Sign up successful.", contactUs.AlertText());
 
-
-        [When(@"I dont fill the required data to purchase")]
-        public void WhenIDontFillTheRequiredDataToPurchase()
-        {
-            cartPage.FillRequiredData("", "RO", "", "111-222-333-444", "FEB", "2025");
         }
 
         [Then(@"I can't buy what is in cart")]
         public void ThenICanTBuyWhatIsInCart()
         {
-            cartPage.ConfirmOrder();
-            Assert.AreEqual("Please fill out Name and Creditcard.", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
+            cartPage.CheckThatOrderNotFinalized();
+          
         }
 
         [When(@"I don't fill the required data for a new message")]
@@ -546,33 +404,23 @@ namespace DemoBlaze
         public void ThenMyMessageIsNotSent()
         {
             contactUs.SendMessageButton();
-            Assert.AreNotEqual("Thanks for the message!!", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
+            Assert.AreNotEqual("Thanks for the message!!", contactUs.AlertText());
+
         }
 
         [Then(@"My message is sent")]
         public void ThenMyMessageIsSent()
         {
             contactUs.SendMessageButton();
-            Assert.AreEqual("Thanks for the message!!", AlertPresent().Text);
-            AlertPresent().Accept();//click on submit button
+            Assert.AreEqual("Thanks for the message!!", contactUs.AlertText());
 
         }
 
-
-        public IAlert AlertPresent()
-        {
-            var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 10));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
-            IAlert popOut = _driver.SwitchTo().Alert();
-
-            return popOut;
-        }
 
         [AfterScenario()]
         public void DisposeWebDriver()
         {
-
+            Thread.Sleep(5000);
             _driver.Dispose();
         }
 
@@ -584,9 +432,6 @@ namespace DemoBlaze
             ThenIRemoveThem();
             homePage.GoToLogOut();
         }
+
     }
 }
-
-// Looks good overall, try to implement things in feedback. 
-// Also try adding a folder structure, for page objects/features.
-// Feature files can stay in the same folder as steps.cs files

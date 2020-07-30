@@ -14,9 +14,11 @@ namespace ConsoleApp1
     {
         private readonly IWebDriver Driver;
 
-        private IWebElement _priceContainer() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("price-container")));
+        private IWebElement _priceContainer => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("price-container")));
+        private IWebElement _addToCart => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'addToCart')]")));
         public IWebElement _name() => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.ClassName("name")));
-       
+        private IAlert _popOut => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
+
         WebDriverWait wait;
         public ProductPage(IWebDriver driver)
         {
@@ -25,29 +27,34 @@ namespace ConsoleApp1
      
         }
 
+
+        public string AlertText()
+        {
+            Driver.SwitchTo().Alert();
+            _popOut.Accept();//click on submit button
+            return _popOut.Text;
+        }
         public void AddToCart()
         {
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@onclick,'addToCart')]"))).Click();
+            _addToCart.Click();
             
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
-            IAlert popOut = Driver.SwitchTo().Alert();
-            string popOutText = popOut.Text;
-            popOut.Text.Contains("Product added");
-            
-            popOut.Accept();
+           _popOut.Text.Contains("Product added");
 
+            _popOut.Accept();
+          
         }
 
         public int Price()
         {
 
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("price-container")));
-            return int.Parse(Regex.Match(_priceContainer().Text, @"\d+").Value);
+            //wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.ClassName("price-container")));
+            return int.Parse(Regex.Match(_priceContainer.Text, @"\d+").Value);
         }
 
         public string Name()
         {
             return _name().Text;
         }
+
     }
 }
